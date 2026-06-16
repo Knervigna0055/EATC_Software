@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
         loadStudents();
         eatc.generateTimetable();
-
+        seedData();
         boolean running = true;
         while (running) {
             printMenu();
@@ -21,7 +21,7 @@ public class Main {
                 case "4" -> lessonReport();
                 case "5" -> incomeReport();
                 case "0" -> { System.out.println("\nGoodbye!"); running = false; }
-                default  -> System.out.println("\nInvalid choice. Please enter 0-5.");
+                default  -> System.out.println("\nInvalid choice.Please enter 0-5.");
             }
         }
         sc.close();
@@ -281,5 +281,43 @@ public class Main {
         eatc.addStudent("Amelia Turner",    "Female", "2014-05-14", "3 Elm Park, Newcastle",       "07700900084");
         eatc.addStudent("Alfie Edwards",    "Male",   "2015-03-24", "22 Queens Road, Nottingham",  "07700900085");
         eatc.addStudent("Isla Mitchell",    "Female", "2014-10-10", "9 Maple Close, Edinburgh",    "07700900086");
+    }
+
+    private static void seedData() {
+        String[][] data = {
+            {"S01", "L001", "5", "Excellent maths lesson, very clear explanations."},
+            {"S02", "L001", "4", "Good session, enjoyed the problem solving."},
+            {"S03", "L001", "5", "Brilliant lesson, learned a lot."},
+            {"S04", "L001", "3", "Decent lesson but a bit fast paced."},
+            {"S05", "L002", "4", "Really helpful English class."},
+            {"S06", "L002", "5", "Fantastic teacher, very engaging."},
+            {"S07", "L002", "4", "Good lesson overall."},
+            {"S08", "L003", "3", "Verbal reasoning was challenging but useful."},
+            {"S09", "L003", "4", "Enjoyed the session, great practice."},
+            {"S10", "L004", "5", "Non-verbal reasoning was very well taught."},
+            {"S01", "L005", "4", "Another great maths session."},
+            {"S02", "L005", "5", "Loved the content this week."},
+            {"S03", "L006", "4", "English class was very productive."},
+            {"S04", "L006", "3", "Good but could be more interactive."},
+            {"S05", "L007", "5", "Excellent verbal reasoning class."},
+            {"S06", "L008", "4", "Non-verbal reasoning made much more sense now."},
+            {"S07", "L009", "5", "Outstanding maths lesson."},
+            {"S08", "L009", "4", "Very well structured."},
+            {"S09", "L010", "4", "English lesson was very helpful."},
+            {"S10", "L010", "5", "Loved every minute of it."},
+        };
+        for (String[] row : data) {
+            String bId = extractBookingId(eatc.bookLesson(row[0], row[1]));
+            if (bId != null) {
+                eatc.checkIn(bId);
+                eatc.addReview(bId, Integer.parseInt(row[2]), row[3]);
+            }
+        }
+    }
+
+    private static String extractBookingId(String bookResult) {
+        if (!bookResult.startsWith("Booking confirmed")) return null;
+        int idx = bookResult.lastIndexOf("Booking ID: ");
+        return idx >= 0 ? bookResult.substring(idx + 12).trim() : null;
     }
 }
